@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>chart</title>
+    <!-- <link rel="stylesheet" type="text/css" href="css/style.css"> -->
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <style>
+      
+    </style>
+  </head>
+
+  <body>
+    <h1>chart</h1>
+    <div id="chart"></div>
+  </body>
+
+  <script>
+    async function readJsonData() {
+      // const bmi_dist = await d3.json('http://localhost:3000/data/bmi_dist.json');
+      // const bg_dist = await d3.json('http://localhost:3000/data/bg_dist.json');
+      // const dbp_dist = await d3.json('http://localhost:3000/data/dbp_dist.json');
+      // const hdl_dist = await d3.json('http://localhost:3000/data/hdl_dist.json');
+      // const ldl_dist = await d3.json('http://localhost:3000/data/ldl_dist.json');
+      // const sbp_dist = await d3.json('http://localhost:3000/data/sbp_dist.json');
+      // const tg_dist = await d3.json('http://localhost:3000/data/tg_dist.json');
+
+      const bmi = await d3.json('http://localhost:3000/data/health/bmi.json');
+      const bg = await d3.json('http://localhost:3000/data/health/bg.json');
+      const dbp = await d3.json('http://localhost:3000/data/health/dbp.json');
+      const hdl = await d3.json('http://localhost:3000/data/health/hdl.json');
+      const ldl = await d3.json('http://localhost:3000/data/health/ldl.json');
+      const sbp = await d3.json('http://localhost:3000/data/health/sbp.json');
+      const tg = await d3.json('http://localhost:3000/data/health/tg.json');
+
+      return {bmi, bg, dbp, hdl, ldl, sbp, tg}
+    }
+    readJsonData().then(async(d) => {
+      // set data
+      const {bmi, bg, dbp, hdl, ldl, sbp, tg} = d;
+      // average
+      const avg = 24.58205;
+      // define margin
+      const margin = {top: 50, right: 50, bottom: 50, left:50};
+      const GradientBarHeight = 30;
+      // using value for linear-gradient color in rect
+      const colorRange = ['#6D8B6D', '#90B9AD', '#F3DF89', '#EB9263', '#E46460']
+      const color = d3.scaleLinear().range(colorRange).domain([1, 2, 3, 4, 5]);
+      // draw svg
+      const svg = d3.select('#chart').append('svg')
+        .attr('width', 800)
+        .attr('height', 250)
+        .attr('transform', `translate(${margin.left}, 0)`)
+
+      const linearGradient = svg.append('defs')
+        .append("linearGradient")
+        .attr("id", "linear-gradient");
+
+      linearGradient.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(1));
+
+      linearGradient.append("stop")
+          .attr("offset", "25%")
+          .attr("stop-color", color(2));
+
+      linearGradient.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", color(3));
+
+      linearGradient.append("stop")
+          .attr("offset", "75%")
+          .attr("stop-color", color(4));
+
+      linearGradient.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(5));
+      // set layout
+      const width = parseInt(svg.style('width'), 10) -30
+      const height = parseInt(svg.style("height"), 10);
+      // Scale
+      const xScale = d3.scaleBand()
+        .domain(bmi.map((d, i) => i))
+        .range([0, width])
+      const yScale = d3.scaleLinear()
+        .domain([0, (d3.max(bmi, (d) => Math.floor(Number(d.population.split('%')[0])))) + 5])
+        .range([height - GradientBarHeight, 10])
+
+      // Axis
+      const yAxis = svg.append('g')
+        .attr('class', 'y-axis')
+        .attr('transform', 'translate(30, 0)')
+
+      yAxis.append('g')
+        .call(d3.axisLeft(yScale).ticks(4))
+      
+      // draw barchart
+      const barChart = svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(30, 0)')
+      barChart.selectAll('rect').data(bmi).enter()
+        .append('rect')
+          .attr("width", xScale.bandwidth())
+          .attr("height", (d, i) => { return height - yScale(Number(d.population.split('%')[0])) - GradientBarHeight})
+          .attr('x', (d, i) => i * xScale.bandwidth())
+          .attr("y", (d, i) => yScale(Number(d.population.split('%')[0])))
+          .attr("fill", "#bebebe")
+          .style("text-anchor", "middle")
+          // .attr("height", (d, i) => Number(d.population.split('%')[0]) * 20)
+          // .attr("y", (d, i) => 300 - (20 * Number(d.population.split('%')[0])))
+
+      // Sample for my point
+      const koreanAvg = barChart.selectAll('rect')
+      const avgData = koreanAvg._groups[0]
+      avgData.forEach((d) => {
+        if(avg >= d.__data__.begin && avg <=d.__data__.end) {
+          // console.log(d)
+          d.setAttribute('fill', '#E16487');
+        }
+      })
+
+      const locateAvg = barChart.selectAll('rect').filter(d => {return avg >= d.begin && avg <=d.end});
+      const lineX = locateAvg._groups[0][0].x.baseVal.value + (locateAvg._groups[0][0].width.baseVal.value / 2)
+      // const y2 = 
+
+      const y2 = locateAvg._groups[0][0].y.baseVal.value
+      console.log(y2)
+
+      const marker = svg.append('g').attr('transform', 'translate(30, 0)')
+
+      // draw line to circle
+      const avgLine = marker.append('line')
+        .attr('x1', lineX)
+        .attr('x2', lineX)
+        .attr('y1', 50) // value ????
+        .attr('y2', y2)
+        .attr('stroke', '#bebebe')
+      // draw circle
+      const circle = marker.append('circle')
+        .attr('cx', lineX)
+        .attr('cy', y2 - 40)
+        .attr('r', 15)
+        .attr('fill', '#bebebe')
+      // push text in g
+      const text = marker.append('text')
+        .attr('x', lineX)
+        .attr('y', y2 - 40)
+        .attr('fill', '#ffffff')
+        .attr("text-anchor", "middle")
+        .style('font-size', 9)
+        .style('font-weight', 'bold')
+        .text('한국인')
+
+      marker.append('text')
+        .attr('x', lineX)
+        .attr('y', y2 - 30)
+        .attr('fill', '#ffffff')
+        .attr("text-anchor", "middle")
+        .style('font-size', 9)
+        .style('font-weight', 'bold')
+        .text('평균')
+
+      // draw to bottom gradient bar
+      const gradientBar = svg.append("g")
+        .attr('class', 'bottom-bar')
+        .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
+        .append('rect')
+          .attr("rx", 15)
+          .attr("ry", 15)
+          .attr('height', 30)
+          .attr('width', width)
+          .attr("fill", "url(#linear-gradient)")
+
+    })
+  </script>
+</html>
