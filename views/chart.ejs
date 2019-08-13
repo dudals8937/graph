@@ -24,149 +24,287 @@
       // const sbp_dist = await d3.json('http://localhost:3000/data/sbp_dist.json');
       // const tg_dist = await d3.json('http://localhost:3000/data/tg_dist.json');
 
-      const bmi = await d3.json('http://localhost:3000/data/health/bmi.json');
-      const bg = await d3.json('http://localhost:3000/data/health/bg.json');
-      const dbp = await d3.json('http://localhost:3000/data/health/dbp.json');
-      const hdl = await d3.json('http://localhost:3000/data/health/hdl.json');
-      const ldl = await d3.json('http://localhost:3000/data/health/ldl.json');
-      const sbp = await d3.json('http://localhost:3000/data/health/sbp.json');
-      const tg = await d3.json('http://localhost:3000/data/health/tg.json');
+      const bmi = await d3.json('http://localhost:3001/data/health/bmi.json');
+      const bg = await d3.json('http://localhost:3001/data/health/bg.json');
+      const dbp = await d3.json('http://localhost:3001/data/health/dbp.json');
+      const hdl = await d3.json('http://localhost:3001/data/health/hdl.json');
+      const ldl = await d3.json('http://localhost:3001/data/health/ldl.json');
+      const sbp = await d3.json('http://localhost:3001/data/health/sbp.json');
+      const tg = await d3.json('http://localhost:3001/data/health/tg.json');
 
       return {bmi, bg, dbp, hdl, ldl, sbp, tg}
     }
     readJsonData().then(async(d) => {
       // set data
-      const {bmi, bg, dbp, hdl, ldl, sbp, tg} = d;
-      // average
-      const avg = 24.58205;
-      // define margin
-      const margin = {top: 50, right: 50, bottom: 50, left:50};
-      const GradientBarHeight = 30;
-      // using value for linear-gradient color in rect
-      const colorRange = ['#6D8B6D', '#90B9AD', '#F3DF89', '#EB9263', '#E46460']
-      const color = d3.scaleLinear().range(colorRange).domain([1, 2, 3, 4, 5]);
-      // draw svg
-      const svg = d3.select('#chart').append('svg')
-        .attr('width', 800)
-        .attr('height', 250)
-        .attr('transform', `translate(${margin.left}, 0)`)
+      const {bmi, bg, dbp, sbp, hdl, ldl, tg} = d;
+      const data = {
+        bmi: bmi,
+        bg: bg,
+        dbp: dbp,
+        sbp: sbp,
+        hdl: hdl,
+        ldl: ldl,
+        tg: tg
+      }
+      console.log(data)
 
-      const linearGradient = svg.append('defs')
-        .append("linearGradient")
-        .attr("id", "linear-gradient");
-
-      linearGradient.append("stop")
-          .attr("offset", "0%")
-          .attr("stop-color", color(1));
-
-      linearGradient.append("stop")
-          .attr("offset", "25%")
-          .attr("stop-color", color(2));
-
-      linearGradient.append("stop")
-          .attr("offset", "50%")
-          .attr("stop-color", color(3));
-
-      linearGradient.append("stop")
-          .attr("offset", "75%")
-          .attr("stop-color", color(4));
-
-      linearGradient.append("stop")
-          .attr("offset", "100%")
-          .attr("stop-color", color(5));
-      // set layout
-      const width = parseInt(svg.style('width'), 10) -30
-      const height = parseInt(svg.style("height"), 10);
-      // Scale
-      const xScale = d3.scaleBand()
-        .domain(bmi.map((d, i) => i))
-        .range([0, width])
-      const yScale = d3.scaleLinear()
-        .domain([0, (d3.max(bmi, (d) => Math.floor(Number(d.population.split('%')[0])))) + 5])
-        .range([height - GradientBarHeight, 10])
-
-      // Axis
-      const yAxis = svg.append('g')
-        .attr('class', 'y-axis')
-        .attr('transform', 'translate(30, 0)')
-
-      yAxis.append('g')
-        .call(d3.axisLeft(yScale).ticks(4))
+      // for (let i in data) {
+      //   console.log('aaa', data)
+      //   drawBarChart(data[i])
+      // }
+      drawBarChart(data.hdl)
       
-      // draw barchart
-      const barChart = svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(30, 0)')
-      barChart.selectAll('rect').data(bmi).enter()
-        .append('rect')
-          .attr("width", xScale.bandwidth())
-          .attr("height", (d, i) => { return height - yScale(Number(d.population.split('%')[0])) - GradientBarHeight})
-          .attr('x', (d, i) => i * xScale.bandwidth())
-          .attr("y", (d, i) => yScale(Number(d.population.split('%')[0])))
-          .attr("fill", "#bebebe")
-          .style("text-anchor", "middle")
-          // .attr("height", (d, i) => Number(d.population.split('%')[0]) * 20)
-          // .attr("y", (d, i) => 300 - (20 * Number(d.population.split('%')[0])))
-
-      // Sample for my point
-      const koreanAvg = barChart.selectAll('rect')
-      const avgData = koreanAvg._groups[0]
-      avgData.forEach((d) => {
-        if(avg >= d.__data__.begin && avg <=d.__data__.end) {
-          // console.log(d)
-          d.setAttribute('fill', '#E16487');
-        }
-      })
-
-      const locateAvg = barChart.selectAll('rect').filter(d => {return avg >= d.begin && avg <=d.end});
-      const lineX = locateAvg._groups[0][0].x.baseVal.value + (locateAvg._groups[0][0].width.baseVal.value / 2)
-      // const y2 = 
-
-      const y2 = locateAvg._groups[0][0].y.baseVal.value
-      console.log(y2)
-
-      const marker = svg.append('g').attr('transform', 'translate(30, 0)')
-
-      // draw line to circle
-      const avgLine = marker.append('line')
-        .attr('x1', lineX)
-        .attr('x2', lineX)
-        .attr('y1', 50) // value ????
-        .attr('y2', y2)
-        .attr('stroke', '#bebebe')
-      // draw circle
-      const circle = marker.append('circle')
-        .attr('cx', lineX)
-        .attr('cy', y2 - 40)
-        .attr('r', 15)
-        .attr('fill', '#bebebe')
-      // push text in g
-      const text = marker.append('text')
-        .attr('x', lineX)
-        .attr('y', y2 - 40)
-        .attr('fill', '#ffffff')
-        .attr("text-anchor", "middle")
-        .style('font-size', 9)
-        .style('font-weight', 'bold')
-        .text('한국인')
-
-      marker.append('text')
-        .attr('x', lineX)
-        .attr('y', y2 - 30)
-        .attr('fill', '#ffffff')
-        .attr("text-anchor", "middle")
-        .style('font-size', 9)
-        .style('font-weight', 'bold')
-        .text('평균')
-
-      // draw to bottom gradient bar
-      const gradientBar = svg.append("g")
-        .attr('class', 'bottom-bar')
-        .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
-        .append('rect')
-          .attr("rx", 15)
-          .attr("ry", 15)
-          .attr('height', 30)
-          .attr('width', width)
-          .attr("fill", "url(#linear-gradient)")
+      function drawBarChart(data) {
+        // average value
+        const avgBmi = 24.58205, // 체질량
+              avgBg = 4.416171,  // 혈당
+              avgDbp = 79.49161, // 혈압(이완기)
+              avgSbp = 119.61,   // 혈압(수축기)
+              avgHdl = 44.76257, // HDL콜레스테롤
+              avgLdl = 114.4676, // LDL콜레스테롤
+              avgTg = 1.588733;  // 중성지방
+  
+        const myPoint = 24.5;
+        // define margin
+        const margin = {top: 50, right: 50, bottom: 50, left:50};
+        const GradientBarHeight = 30;
+        // using value for linear-gradient color in rect
+        const colorRange = ['#6D8B6D', '#90B9AD', '#F3DF89', '#EB9263', '#E46460'];
+        const color = d3.scaleLinear().range(colorRange).domain([1, 2, 3, 4, 5]);
+        // draw svg
+        const svg = d3.select('#chart').append('svg')
+          .attr('width', 800)
+          .attr('height', 250)
+          .attr('transform', `translate(${margin.left}, 0)`)
+        // gradient of bottom bar
+        const linearGradient = svg.append('defs')
+          .append("linearGradient")
+          .attr("id", "linear-gradient");
+  
+        linearGradient.append("stop")
+            .attr("offset", "0%")
+            .attr("stop-color", color(1));
+  
+        linearGradient.append("stop")
+            .attr("offset", "25%")
+            .attr("stop-color", color(2));
+  
+        linearGradient.append("stop")
+            .attr("offset", "50%")
+            .attr("stop-color", color(3));
+  
+        linearGradient.append("stop")
+            .attr("offset", "75%")
+            .attr("stop-color", color(4));
+  
+        linearGradient.append("stop")
+            .attr("offset", "100%")
+            .attr("stop-color", color(5));
+        // setting layout
+        const width = parseInt(svg.style('width'), 10) -30
+        const height = parseInt(svg.style("height"), 10);
+        // define scale
+        const xScale = d3.scaleBand()
+          .domain(data.map((d, i) => i))
+          .range([0, width])
+        const yScale = d3.scaleLinear()
+          .domain([0, (d3.max(data, (d) => Math.floor(Number(d.population.split('%')[0])))) + 5])
+          .range([height - GradientBarHeight, 10])
+  
+        // Axis Y
+        const yAxis = svg.append('g')
+          .attr('class', 'y-axis')
+          .attr('transform', 'translate(30, 0)')
+  
+        yAxis.append('g')
+          .call(d3.axisLeft(yScale).ticks(4))
+        
+        // draw barchart
+        const barChart = svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(30, 0)')
+        barChart.selectAll('rect').data(data).enter()
+          .append('rect')
+            .attr("width", xScale.bandwidth())
+            .attr("height", (d, i) => { return height - yScale(Number(d.population.split('%')[0])) - GradientBarHeight})
+            .attr('x', (d, i) => i * xScale.bandwidth())
+            .attr("y", (d, i) => yScale(Number(d.population.split('%')[0])))
+            .attr("fill", "#bebebe")
+            .style("text-anchor", "middle")
+            // .attr("height", (d, i) => Number(d.population.split('%')[0]) * 20)
+            // .attr("y", (d, i) => 300 - (20 * Number(d.population.split('%')[0])))
+  
+        // Duplicate value
+        // 값이 1개이면 내점수의 maker 높이를 다르게 하기 위한 변수 선언
+        // 값이 한개이면 data-class 에 duplicate 가 들어가고 한개 이상이면 false
+        const duplicate = [];
+        data.forEach(d => {
+          // if((myPoint >= d.begin && myPoint <=d.end) || ( d.average !== 0 && d.average >= d.begin && d.average <=d.end)) {
+          if((d.average !== 0 && d.average >= d.begin && d.average <=d.end)) {
+            duplicate.push(d)
+          }
+        })
+        console.log(duplicate)
+  
+        // Average marker
+        const markerAvg = svg.append('g').attr('transform', 'translate(30, 0)');
+        // if(d.average !== '' && Number(d.average) >= d.begin && Number(d.average) <=d.end) {
+        //     return d
+        //   }
+        // }).attr('class', 'average');
+        const locateAvg = barChart.selectAll('rect').filter(d => {return d.average !== 0 && d.average >= d.begin && d.average <=d.end}).attr('class', 'average');
+        // locateAvg.attr('class', 'average')
+        const r = 15; // 반지름
+        const avgX = Number(locateAvg.attr('x')) + Number(locateAvg.attr('width')) / 2
+        const avgY = Number(locateAvg.attr('y'))
+        // const avgX = locateAvg._groups[0][0].x.baseVal.value + (locateAvg._groups[0][0].width.baseVal.value / 2)
+        // const avgY = locateAvg._groups[0][0].y.baseVal.value
+        const defaultY = 60;
+        const adjustY = avgY - defaultY + r;
+        // console.log(adjustY)
+        // console.log(avgY)
+        markerAvg.append('line')
+          .attr('x1', avgX)
+          .attr('x2', avgX)
+          .attr('y1', () => {
+            if(duplicate.length === 1) {
+              return avgY - 15
+            } else {
+              return avgY - defaultY
+            }
+          })
+          .attr('y2', avgY)
+          .attr('stroke', '#bebebe')
+        markerAvg.append('circle')
+          .attr('cx', avgX)
+          .attr('cy', () => {
+            if(duplicate.length === 1) {
+              return avgY - 24
+            } else {
+              return avgY - defaultY
+            }
+          })
+          .attr('r', r)
+          .attr('fill', '#bebebe')
+        // text in circle
+        markerAvg.append('text')
+          .attr('x', avgX)
+          .attr('y', () => {
+            if(duplicate.length === 1) {
+              return avgY - 24
+            } else {
+              return avgY - defaultY
+            }
+          })
+          .attr('fill', '#ffffff')
+          .attr("text-anchor", "middle")
+          .style('font-size', 9)
+          .style('font-weight', 'bold')
+          .text('한국인')
+        markerAvg.append('text')
+          .attr('x', avgX)
+          .attr('y', () => {
+            if(duplicate.length === 1) {
+              return avgY - 14
+            } else {
+              return avgY - defaultY + 10
+            }
+          })
+          .attr('fill', '#ffffff')
+          .attr("text-anchor", "middle")
+          .style('font-size', 9)
+          .style('font-weight', 'bold')
+          .text('평균')
+  
+        // My point Marker
+        const markerMypoint = svg.append('g').attr('transform', 'translate(30, 0)')
+        // const koreanAvg = barChart.selectAll('rect').filter(d => {return myPoint >= d.begin && myPoint <=d.end})
+        const koreanAvg = barChart.selectAll('rect').filter(d => {return d.average !== 0 && d.average >= d.begin && d.average <=d.end})
+          .attr('id', 'my-point')
+          .attr('fill', '#E16487')
+        // const avgData = koreanAvg._groups[0];
+        // avgData.forEach((d) => {
+        //   if(myPoint >= d.__data__.begin && myPoint <=d.__data__.end) {
+        //     d.setAttribute('class', 'my-point')
+        //     d.setAttribute('fill', '#E16487');
+        //   }
+        // })
+        const point = d3.select('#my-point')
+        const myX = Number(point.attr('x')) + Number(point.attr('width')) / 2
+        const myY = Number(point.attr('y'))
+        // const myX = point._groups[0][0].x.baseVal.value + (point._groups[0][0].width.baseVal.value / 2)
+        // const myY = point._groups[0][0].y.baseVal.value
+  
+        markerMypoint.append('line')
+          .attr('x1', myX)
+          .attr('x2', myX)
+          .attr('y1', () => {
+            if(duplicate.length === 1) {
+              // return defaultY - 33
+              return myY - 25 - 33
+            } else {
+              return myY - defaultY
+            }
+          })
+          // .attr('y1', defaultY - 33) 
+          .attr('y2', myY)
+          .attr('stroke', '#E16487')
+        markerMypoint.append('circle')
+          .attr('cx', myX)
+          // .attr('cy', avgY - adjustY - 30 - 3)
+          .attr('cy', () => {
+            if(duplicate.length === 1) {
+              // return avgY - adjustY - 33
+              return myY - defaultY + 5
+            } else {
+              return myY - defaultY
+            }
+          })
+          .attr('r', r)
+          .attr('fill', '#E16487')
+        // text in circle
+        markerMypoint.append('text')
+          .attr('x', myX)
+          .attr('y', () => {
+          // .attr('y', avgY - adjustY - 30 + 3)
+            if(duplicate.length === 1) {
+              return myY - defaultY + 8
+            } else {
+              return myY - defaultY + 3
+            }
+          })
+          .attr('fill', '#ffffff')
+          .attr("text-anchor", "middle")
+          .style('font-size', 9)
+          .style('font-weight', 'bold')
+          .text('내점수')
+  
+        // draw gradient bar
+        const gradientBar = svg.append("g")
+          .attr('class', 'bottom-bar')
+          .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
+          
+        gradientBar.append('rect')
+            .attr("rx", 15)
+            .attr("ry", 15)
+            .attr('height', 30)
+            .attr('width', width)
+            .attr("fill", "url(#linear-gradient)")
+  
+        gradientBar.append('text')
+          .attr('x', margin.left)
+          .attr('y', 20)
+          .attr("text-anchor", "middle")
+          .text('보통')
+          .style('font-size', 12)
+          .style('fill', '#ffffff')
+  
+        gradientBar.append('text')
+          .attr('x', width - margin.right)
+          .attr('y', 20)
+          .attr("text-anchor", "middle")
+          .text('주의')
+          .style('font-size', 12)
+          .style('fill', '#ffffff')
+      }
 
     })
   </script>
