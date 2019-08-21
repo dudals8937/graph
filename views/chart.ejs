@@ -54,7 +54,7 @@
         sbp: 0,
         hdl: 0.33,
         ldl: 0.75,
-        tg: 0.47
+        tg: 0.55 // 0.47
       }
       const decade = {
         bmi: 0.67,
@@ -65,7 +65,7 @@
         ldl: 0.55,
         tg: 0.58
       }
-      drawBarChart(data.tg, myPoint.tg, decade.tg)
+      drawBarChart(data.bg, myPoint.bg, decade.bg)
       
       function drawBarChart(data, myPoint, decade) {
         // define margin
@@ -76,35 +76,40 @@
         const color = d3.scaleLinear().range(colorRange).domain([1, 2, 3, 4, 5]);
         // draw svg
         const svg = d3.select('#chart').append('svg')
-          .attr('width', 800)
+          .attr('width', 850)
           .attr('height', 300)
           .attr('transform', `translate(${margin.left}, 0)`)
         // gradient of bottom bar
-        const linearGradient = svg.append('defs')
+
+        const chart = svg.append('g')
+          .attr('class', 'chart')
+          .attr('transform', 'translate(50, 0)')
+        const linearGradient = chart.append('defs')
           .append("linearGradient")
           .attr("id", "linear-gradient");
   
         linearGradient.append("stop")
-            .attr("offset", "0%")
-            .attr("stop-color", color(1));
+          .attr("offset", "0%")
+          .attr("stop-color", color(1));
   
         linearGradient.append("stop")
-            .attr("offset", "25%")
-            .attr("stop-color", color(2));
+          .attr("offset", "25%")
+          .attr("stop-color", color(2));
   
         linearGradient.append("stop")
-            .attr("offset", "50%")
-            .attr("stop-color", color(3));
+          .attr("offset", "50%")
+          .attr("stop-color", color(3));
   
         linearGradient.append("stop")
-            .attr("offset", "75%")
-            .attr("stop-color", color(4));
+          .attr("offset", "75%")
+          .attr("stop-color", color(4));
   
         linearGradient.append("stop")
-            .attr("offset", "100%")
-            .attr("stop-color", color(5));
+          .attr("offset", "100%")
+          .attr("stop-color", color(5));
         // setting layout
-        const width = parseInt(svg.style('width'), 10) -30
+        const width = parseInt(svg.style('width'), 10) -150
+        console.log(width)
         const height = parseInt(svg.style("height"), 10);
         // define scale
         const xScale = d3.scaleBand()
@@ -115,7 +120,7 @@
           .range([height - GradientBarHeight, 30])
   
         // Axis Y
-        const yAxis = svg.append('g')
+        const yAxis = chart.append('g')
           .attr('class', 'y-axis')
           .attr('transform', 'translate(30, 0)')
   
@@ -123,7 +128,7 @@
           .call(d3.axisLeft(yScale).ticks(4))
         
         // draw barchart
-        const barChart = svg.append('g').attr('class', 'x-axis').attr('transform', 'translate(30, 0)')
+        const barChart = chart.append('g').attr('class', 'x-axis').attr('transform', 'translate(30, 0)')
         barChart.selectAll('rect').data(data).enter()
           .append('rect')
             .attr("width", xScale.bandwidth())
@@ -143,18 +148,18 @@
             duplicate.push(d)
           }
         })
-        console.log(duplicate)
+        // console.log(duplicate)
   
         // Marker
         // decade
         // 추가되어야 할 부분.
         // My point Marker
         // z-index 때문에 my-marker를 먼저 그리고 그 다음에 한국인 평균 marker 그리도록. 따라서 10년후가 제일 먼저 그려져야함
-        const markerMypoint = svg.append('g')
+        const markerMypoint = chart.append('g')
           .attr('class', 'marker')
           .attr('transform', 'translate(30, 0)');
         // Korean average Marker
-        const markerAvg = svg.append('g')
+        const markerAvg = chart.append('g')
           .attr('class', 'marker')
           .attr('transform', 'translate(30, 0)');
         const locateAvg = barChart.selectAll('rect').filter(d => {return d.average !== 0 && d.average >= d.begin && d.average <=d.end})
@@ -274,7 +279,7 @@
           .text('내점수')
   
         // draw gradient bar
-        const gradientBar = svg.append("g")
+        const gradientBar = chart.append("g")
           .attr('class', 'bottom-bar')
           .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
           
@@ -300,15 +305,46 @@
           .text('주의')
           .style('font-size', 12)
           .style('fill', '#ffffff')
-
-        const textArea = svg.append('g')
+        
+        // side text area
+        let text = '';
+        switch (data[0].begin) {
+          case "-0.025":
+            text = '혈당';
+            break;
+          case "-0.011":
+            text = '체질량지수';
+            break;
+          case "-0.01703704":
+            text = '혈압';
+            break;
+          case "-0.015":
+            text = 'HDL콜레스테롤';
+            break;
+          case "-0.020909091":
+            text = 'LDL콜레스테롤';
+            break;
+          case "-0.01751852":
+            text = `중성지방`;
+            break;
+        }
+        const downTextArea = chart.append('g')
           .attr('class', 'text-area')
-          .attr('transform', `translate(30, ${height})`)
-          .attr('width', width)
-          .attr('height', 50)
+          .attr('transform', `translate(-10, ${height - 22})`)
+          .attr("text-anchor", "middle")
+        downTextArea.append('text').text(text)
+          .attr('font-size', 10)
+        downTextArea.append('text').text('낮아짐')
+          .attr('transform', `translate(0, 20)`)
 
-        textArea.selectAll('text').filter(d => console.log('asdasd', d))
-          // .text()
+        const upTextArea = chart.append('g')
+          .attr('class', 'text-area')
+          .attr('transform', `translate(${width + 60}, ${height - 22})`)
+          .attr("text-anchor", "middle")
+        upTextArea.append('text').text(text)
+          .attr('font-size', 10)
+        upTextArea.append('text').text('높아짐')
+          .attr('transform', `translate(0, 20)`)
       }
     })
   </script>
