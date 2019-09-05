@@ -23,6 +23,13 @@
       // const ldl_dist = await d3.json('http://localhost:3000/data/ldl_dist.json');
       // const sbp_dist = await d3.json('http://localhost:3000/data/sbp_dist.json');
       // const tg_dist = await d3.json('http://localhost:3000/data/tg_dist.json');
+      const hair = await d3.json('http://localhost:3001/data/beauty/hair.json');
+      const hairLoss = await d3.json('http://localhost:3001/data/beauty/hairLoss.json');
+      const caffeine = await d3.json('http://localhost:3001/data/beauty/caffeine.json');
+      const vitaminc = await d3.json('http://localhost:3001/data/beauty/vitaminc.json');
+      const skinAging = await d3.json('http://localhost:3001/data/beauty/skinAging.json');
+      const pigmentation = await d3.json('http://localhost:3001/data/beauty/pigmentation.json');
+      const skinElasticity = await d3.json('http://localhost:3001/data/beauty/skinElasticity.json');
 
       const bmi = await d3.json('http://localhost:3001/data/health/bmi.json');
       const bg = await d3.json('http://localhost:3001/data/health/bg.json');
@@ -32,12 +39,19 @@
       const sbp = await d3.json('http://localhost:3001/data/health/sbp.json');
       const tg = await d3.json('http://localhost:3001/data/health/tg.json');
 
-      return {bmi, bg, dbp, hdl, ldl, sbp, tg}
+      return {hair, hairLoss, caffeine, vitaminc, skinAging, skinElasticity, pigmentation, bmi, bg, dbp, hdl, ldl, sbp, tg}
     }
     readJsonData().then(async(d) => {
       // set data
-      const {bmi, bg, dbp, sbp, hdl, ldl, tg} = d;
+      const {hair, hairLoss, caffeine, vitaminc, skinAging, skinElasticity, pigmentation, bmi, bg, dbp, sbp, hdl, ldl, tg} = d;
       const data = {
+        hair: hair,
+        hairLoss: hairLoss,
+        caffeine: caffeine,
+        vitaminc: vitaminc,
+        skinAging: skinAging,
+        skinElasticity: skinElasticity,
+        pigmentation: pigmentation,
         bmi: bmi,
         bg: bg,
         dbp: dbp,
@@ -48,6 +62,13 @@
       }
       console.log(data)
       const myPoint = {
+        hair: 0.35,
+        hairLoss: 0.78,
+        caffeine: 0.1,
+        vitaminc: 0.7,
+        skinAging: 0.2,
+        skinElasticity: 0.5,
+        pigmentation: 0.8,
         bmi: 0.47,
         bg: 0.21,
         dbp: 0.25,
@@ -57,7 +78,7 @@
         tg: 0.55 // 0.47
       }
       const decade = {
-        bmi: 0.67,
+        bmi: 0.27,
         bg: 0.41,
         dbp: 0.55,
         sbp: 0,
@@ -65,9 +86,10 @@
         ldl: 0.55,
         tg: 0.58
       }
-      drawBarChart(data.bg, myPoint.bg, decade.bg)
+      drawBarChart(data.bmi, myPoint.bmi, decade.bmi)
       
       function drawBarChart(data, myPoint, decade) {
+        console.log(typeof decade != 'undefiend' && decade != '');
         // define margin
         const margin = {top: 50, right: 50, bottom: 50, left:50};
         const GradientBarHeight = 30;
@@ -117,8 +139,8 @@
           .range([0, width])
         const yScale = d3.scaleLinear()
           .domain([0, (d3.max(data, (d) => Math.floor(Number(d.population.split('%')[0])))) + 5])
-          .range([height - GradientBarHeight, 30])
-  
+          .range([height - GradientBarHeight, 70])
+                    
         // Axis Y
         const yAxis = chart.append('g')
           .attr('class', 'y-axis')
@@ -126,6 +148,18 @@
   
         yAxis.append('g')
           .call(d3.axisLeft(yScale).ticks(4))
+
+        const yAxisName = chart.append('g')
+          .attr('class', 'population')
+          .attr('transform', 'translate(30, 0)')
+
+        yAxisName.append('text')
+          .attr('x', 0)
+          .attr('y', 20)
+          .attr("text-anchor", "middle")
+          .text('인구비율(%)')
+          .style('font-size', 11)
+          .style('fill', '#181818')
         
         // draw barchart
         const barChart = chart.append('g').attr('class', 'x-axis').attr('transform', 'translate(30, 0)')
@@ -139,20 +173,47 @@
             .style("text-anchor", "middle")
   
         // Duplicate value
-        // 값이 1개이면 내점수의 maker 높이를 다르게 하기 위한 변수 선언
-        // 값이 한개이면 data-class 에 duplicate 가 들어가고 한개 이상이면 false
-        const duplicate = [];
+        // 각 maker 높이를 다르게 하기 위한 변수 선언
+        // duplicate 는 평균값이 포함된 데이터 구간에 myPoint 또는 decade값이 일치하는경우 key: value값을 넣어준다.
+        // duplicate2 는 myPoint의 구간에 decade값이 있는경우 key: value값을 넣어준다.
+        // line, circle, text의 y2에서 해당 구간(duplicate, duplicate2)에 myPoint, decade 값이 있는지 체크하여 분기를 나눠줌으로써 높이를 설정한다.
+        let duplicate = [];
+        let duplicate2 = [];
         data.forEach(d => {
-          // if((d.average !== 0 && d.average >= d.begin && d.average <=d.end)) {
-          if((myPoint >= d.begin && myPoint <=d.end) || ( d.average !== 0 && d.average >= d.begin && d.average <=d.end)) {
-            duplicate.push(d)
+          if(d.average !== 0 && d.average >= d.begin && d.average <= d.end) {
+            duplicate = d;
+            if(myPoint >= duplicate.begin && myPoint <= duplicate.end) {
+              duplicate.myPoint = myPoint
+            } 
+            if(decade >= d.begin && decade <=d.end) {
+              duplicate.decade = decade
+            }
+          }
+        });
+        // console.log(duplicate)
+
+        data.forEach(d => {
+          if(myPoint >= d.begin && myPoint <= d.end) {
+            duplicate2 = d;
+            if(decade >= duplicate2.begin && decade <= duplicate2.end) {
+              duplicate2.decade = decade
+            }
           }
         })
-        // console.log(duplicate)
-  
+        // console.log(duplicate2)
+        // data.forEach(d => {
+        //   // if((d.average !== 0 && d.average >= d.begin && d.average <=d.end)) {
+        //   if((myPoint >= d.begin && myPoint <=d.end) || ( d.average !== 0 && d.average >= d.begin && d.average <=d.end) || (decade >= d.begin && decade <=d.end)) {
+        //     duplicate.push(d)
+        //   }
+        // })
+        
+                  
         // Marker
         // decade
-        // 추가되어야 할 부분.
+        const markerAfter10Year = chart.append('g')
+			    .attr('class', 'marker')
+			    .attr('transform', 'translate(30, 0)');
         // My point Marker
         // z-index 때문에 my-marker를 먼저 그리고 그 다음에 한국인 평균 marker 그리도록. 따라서 10년후가 제일 먼저 그려져야함
         const markerMypoint = chart.append('g')
@@ -179,7 +240,11 @@
           .attr('x1', avgX)
           .attr('x2', avgX)
           .attr('y1', () => {
-            if(duplicate.length === 1) {
+            if(duplicate.myPoint && duplicate.decade) {
+              return avgY - 15
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return avgY - 15
+            } else if (duplicate.myPoint && !duplicate.decade) {
               return avgY - 15
             } else {
               return avgY - defaultY
@@ -190,7 +255,11 @@
         markerAvg.append('circle')
           .attr('cx', avgX)
           .attr('cy', () => {
-            if(duplicate.length === 1) {
+            if(duplicate.myPoint && duplicate.decade) {
+              return avgY - 24
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return avgY - 24
+            } else if (duplicate.myPoint && !duplicate.decade) {
               return avgY - 24
             } else {
               return avgY - defaultY
@@ -202,7 +271,11 @@
         markerAvg.append('text')
           .attr('x', avgX)
           .attr('y', () => {
-            if(duplicate.length === 1) {
+            if(duplicate.myPoint && duplicate.decade) {
+              return avgY - 24
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return avgY - 24
+            } else if (duplicate.myPoint && !duplicate.decade) {
               return avgY - 24
             } else {
               return avgY - defaultY
@@ -216,7 +289,11 @@
         markerAvg.append('text')
           .attr('x', avgX)
           .attr('y', () => {
-            if(duplicate.length === 1) {
+            if(duplicate.myPoint && duplicate.decade) {
+              return avgY - 14
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return avgY - 14
+            } else if (duplicate.myPoint && !duplicate.decade) {
               return avgY - 14
             } else {
               return avgY - defaultY + 10
@@ -243,8 +320,10 @@
           .attr('x1', myX)
           .attr('x2', myX)
           .attr('y1', () => {
-            if(duplicate.length === 1) {
-              return myY - 25 - 33
+            if(duplicate2.decade && duplicate2.average === 0) {
+              return myY - 15
+            } else if (duplicate2.decade && duplicate2.average > 0) {
+              return myY - defaultY
             } else {
               return myY - defaultY
             }
@@ -254,8 +333,10 @@
         markerMypoint.append('circle')
           .attr('cx', myX)
           .attr('cy', () => {
-            if(duplicate.length === 1) {
-              return myY - defaultY + 5
+            if(duplicate2.decade && duplicate2.average === 0) {
+              return myY - 25
+            } else if (duplicate2.decade && duplicate2.average > 0) {
+              return myY - defaultY
             } else {
               return myY - defaultY
             }
@@ -266,8 +347,10 @@
         markerMypoint.append('text')
           .attr('x', myX)
           .attr('y', () => {
-            if(duplicate.length === 1) {
-              return myY - defaultY + 8
+            if(duplicate2.decade && duplicate2.average === 0) {
+              return myY - defaultY + 38
+            } else if (duplicate2.decade && duplicate2.average > 0) {
+              return myY - defaultY + 3
             } else {
               return myY - defaultY + 3
             }
@@ -277,18 +360,94 @@
           .style('font-size', 9)
           .style('font-weight', 'bold')
           .text('내점수')
-  
+
+        const after10year = barChart.selectAll('rect').filter(d => {return decade >= d.begin && decade <=d.end})
+          .attr('class', 'after10year')
+
+        const decadeX = Number(after10year.attr('x')) + Number(after10year.attr('width')) / 2
+        const decadeY = Number(after10year.attr('y'))
+
+        markerAfter10Year.append('line')
+          .attr('x1', decadeX)
+          .attr('x2', decadeX)
+          .attr('y1', () => {
+            if(duplicate.myPoint && duplicate.decade) {
+              return decadeY - 98
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY
+            } else if (duplicate.myPoint && !duplicate.decade) {
+              return decadeY - defaultY
+            } else {
+              return decadeY - defaultY
+            }
+          })
+          .attr('y2', decadeY)
+          .attr('stroke', '#28a8a8')
+
+          markerAfter10Year.append('circle')
+          .attr('cx', decadeX)
+          .attr('cy', () => {
+            if(duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY - 40
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY
+            } else if (duplicate.myPoint && !duplicate.decade) {
+              return decadeY - defaultY
+            } else {
+              return decadeY - defaultY
+            }
+          })
+          .attr('r', r)
+          .attr('fill', '#28a8a8')
+
+        markerMypoint.append('text')
+          .attr('x', decadeX)
+          .attr('y', () => {
+            if(duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY - 40
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY
+            } else if (duplicate.myPoint && !duplicate.decade) {
+              return decadeY - defaultY
+            } else {
+              return decadeY - defaultY
+            }
+          })
+          .attr('fill', '#ffffff')
+          .attr("text-anchor", "middle")
+          .style('font-size', 9)
+          .style('font-weight', 'bold')
+          .text('10년후')
+
+        markerMypoint.append('text')
+          .attr('x', decadeX)
+          .attr('y', () => {
+            if(duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY - 30
+            } else if (!duplicate.myPoint && duplicate.decade) {
+              return decadeY - defaultY + 10
+            } else if (duplicate.myPoint && !duplicate.decade) {
+              return decadeY - defaultY + 10
+            } else {
+              return decadeY - defaultY + 10
+            }
+          })
+          .attr('fill', '#ffffff')
+          .attr("text-anchor", "middle")
+          .style('font-size', 9)
+          .style('font-weight', 'bold')
+          .text('예측')
         // draw gradient bar
         const gradientBar = chart.append("g")
           .attr('class', 'bottom-bar')
           .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
           
         gradientBar.append('rect')
-            .attr("rx", 15)
-            .attr("ry", 15)
-            .attr('height', 30)
-            .attr('width', width)
-            .attr("fill", "url(#linear-gradient)")
+          .attr("rx", 15)
+          .attr("ry", 15)
+          .attr('height', 30)
+          .attr('width', width)
+          .attr("fill", "url(#linear-gradient)")
   
         gradientBar.append('text')
           .attr('x', margin.left)

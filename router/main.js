@@ -7,7 +7,7 @@ module.exports = function(app){
     let bgDistCount = 0;
     const bgDist = [];
 
-    lineReader.eachLine('./public/data/health/tg.txt', (line, last) => {
+    lineReader.eachLine('./public/data/beauty/vitaminc.txt', (line, last) => {
       bgDist[bgDistCount] = filterItems(line);
       bgDistCount++;
 
@@ -19,7 +19,7 @@ module.exports = function(app){
     })
 
     function makeFile(data) {
-      fs.writeFile('./public/data/health/tg.json', data, (err) => {
+      fs.writeFile('./public/data/beauty/vitaminc.json', data, (err) => {
         if(err) {
           return console.log(err)
         }
