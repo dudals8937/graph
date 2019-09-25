@@ -55,29 +55,30 @@
         bmi: bmi,
         bg: bg,
         dbp: dbp,
-        sbp: sbp,
         hdl: hdl,
         ldl: ldl,
         tg: tg
       }
       console.log(data)
       const myPoint = {
-        hair: 0.35,
-        hairLoss: 0.78,
-        caffeine: 0.1,
-        vitaminc: 0.7,
-        skinAging: 0.2,
         skinElasticity: 0.5,
         pigmentation: 0.8,
+        skinAging: 0.2,
+        hairLoss: 0.78,
+        hair: 0.35,
+        vitaminc: 0.7,
+        caffeine: 0.1,
         bmi: 0.47,
-        bg: 0.21,
-        dbp: 0.25,
-        sbp: 0,
-        hdl: 0.33,
+        tg: 0.55, // 0.47
         ldl: 0.75,
-        tg: 0.55 // 0.47
+        hdl: 0.33,
+        bg: 0.21,
+        dbp: 0.25
       }
       const decade = {
+        skinElasticity: 0,
+        pigmentation: 0,
+        caffeine: 0,
         bmi: 0.27,
         bg: 0.41,
         dbp: 0.55,
@@ -86,10 +87,43 @@
         ldl: 0.55,
         tg: 0.58
       }
-      drawBarChart(data.bmi, myPoint.bmi, decade.bmi)
+
+      const division = {
+        skinElasticity: ['양호','주의'],
+        pigmentation: ['좋음','보통','주의'],
+        skinAging: ['좋음','보통'],
+        hairLoss: ['양호','주의'],
+        hair: ['굵음','보통'],
+        vitaminc: ['양호','주의'],
+        caffeine: ['보통','좋음'],
+        bmi: ['관심','보통','주의'],
+        tg: ['좋음','보통','관심','주의'],
+        ldl: ['좋음','보통','관심','주의'],
+        hdl: ['좋음','보통','관심','주의'],
+        bg: ['양호','관심','주의'],
+        dbp: ['관심','보통','주의'],
+      }
+
+      const divisionBar = {
+        skinElasticity: [2],
+        pigmentation: [0, 2],
+        skinAging: [],
+        hairLoss: [],
+        hair: [],
+        vitaminc: [],
+        caffeine: [3],
+        bmi: [],
+        tg: [],
+        ldl: [],
+        hdl: [],
+        bg: [],
+        dbp: [],
+      }
+      drawBarChart(data.pigmentation, myPoint.pigmentation, decade.pigmentation, division.pigmentation, divisionBar.pigmentation)
       
-      function drawBarChart(data, myPoint, decade) {
-        console.log(typeof decade != 'undefiend' && decade != '');
+      function drawBarChart(data, myPoint, decade, division, divisionBar) {
+        console.log(divisionBar)
+        console.log('데이터길이', data.length)
         // define margin
         const margin = {top: 50, right: 50, bottom: 50, left:50};
         const GradientBarHeight = 30;
@@ -98,7 +132,7 @@
         const color = d3.scaleLinear().range(colorRange).domain([1, 2, 3, 4, 5]);
         // draw svg
         const svg = d3.select('#chart').append('svg')
-          .attr('width', 850)
+          .attr('width', 654)
           .attr('height', 300)
           .attr('transform', `translate(${margin.left}, 0)`)
         // gradient of bottom bar
@@ -438,32 +472,194 @@
           .style('font-weight', 'bold')
           .text('예측')
         // draw gradient bar
-        const gradientBar = chart.append("g")
+        var gradientBar = chart.append("g")
           .attr('class', 'bottom-bar')
           .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
+        
+        console.log('divisionBar', divisionBar[0] + 1)
+        console.log('length', divisionBar.length)  
+
+        if(divisionBar.length === 1) {
+          var divisionX = d3.selectAll('.x-axis > *').filter(":nth-child(" + (divisionBar[0] + 1) + ")").attr('x')
+          console.log('ddddddddddd', divisionX)
+          var rect1 = gradientBar.append('rect')
+            .attr("tl", 15)
+            .attr("bl", 15)
+            .attr('height', 30)
+            .attr('width', divisionX)
+            .style('fill', '#6D8B6D')
+
+          var rect2 = gradientBar.append('rect')
+            .attr('x', divisionX)
+            .attr('height', 30)
+            .attr('width', width - divisionX)
+            .attr('fill', '#E46460')
+
+          var gradientText1 = gradientBar.append('text')
+          var gradientText2 = gradientBar.append('text')
+
+          gradientText1
+            .attr('x', divisionX / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[0])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+  
+          gradientText2
+            .attr('x', (rect1.attr('width') * 2 + (width - divisionX) ) / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[1])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+        }
+
+        if(divisionBar.length === 2) {
+
+          var good = d3.selectAll('.x-axis > *').filter(":nth-child(" + (divisionBar[0] + 1) + ")").attr('width')
+          console.log('good', good)
+          var typical = d3.selectAll('.x-axis > *').filter(":nth-child(" + (divisionBar[1] + 1) + ")").attr('width') * (divisionBar[1] + 1)
+          console.log('typical', typical)
+
+          var rect1 = gradientBar.append('rect')
+            .attr("tl", 15)
+            .attr("bl", 15)
+            .attr('height', 30)
+            .attr('width', good)
+            .style('fill', '#6D8B6D')
+
+          var rect2 = gradientBar.append('rect')
+            .attr('x', good)
+            .attr('height', 30)
+            .attr('width', typical - good)
+            .attr('fill', '#F3DF89')
+
+          var rect3 = gradientBar.append('rect')
+            .attr('x', typical)
+            .attr('height', 30)
+            .attr('width', width)
+            .style('fill', '#E46460')
+
+          var gradientText1 = gradientBar.append('text')
+          var gradientText2 = gradientBar.append('text')
+
+          gradientText1
+            .attr('x', good / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[0])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+  
+          gradientText2
+            .attr('x', (rect1.attr('width') * 2 + (typical - good) ) / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[1])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+        }
           
-        gradientBar.append('rect')
-          .attr("rx", 15)
-          .attr("ry", 15)
-          .attr('height', 30)
-          .attr('width', width)
-          .attr("fill", "url(#linear-gradient)")
+        
+          // .attr("fill", "url(#linear-gradient)")
+
+        // const gradientText1 = gradientBar.append('text')
+        // const gradientText2 = gradientBar.append('text')
+        // const gradientText3 = gradientBar.append('text')
+        // const gradientText4 = gradientBar.append('text')
+
+        // if(division.length === 2) {
+          // gradientText1
+          //   .attr('x', margin.left)
+          //   .attr('y', 20)
+          //   .attr("text-anchor", "middle")
+          //   .text(division[0])
+          //   .style('font-size', 12)
+          //   .style('fill', '#ffffff')
   
-        gradientBar.append('text')
-          .attr('x', margin.left)
-          .attr('y', 20)
-          .attr("text-anchor", "middle")
-          .text('보통')
-          .style('font-size', 12)
-          .style('fill', '#ffffff')
+          // gradientText2
+          //   .attr('x', width - margin.right)
+          //   .attr('y', 20)
+          //   .attr("text-anchor", "middle")
+          //   .text(division[1])
+          //   .style('font-size', 12)
+          //   .style('fill', '#ffffff')
+
+        // } else if(division.length === 3) {
+        //   gradientText1
+        //     .attr('x', margin.left)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[0])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+
+        //   gradientText2
+        //     .attr('x', margin.left + 200)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[1])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+
+        //   gradientText3
+        //     .attr('x', width - margin.right)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[2])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+        // } else if (division.length === 4){
+        //   gradientText1
+        //     .attr('x', margin.left)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[0])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+
+        //   gradientText2
+        //     .attr('x', margin.left + 130)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[1])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+
+        //   gradientText3
+        //     .attr('x', 320)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[2])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+          
+        //   gradientText4
+        //     .attr('x', width - margin.right)
+        //     .attr('y', 20)
+        //     .attr("text-anchor", "middle")
+        //     .text(division[3])
+        //     .style('font-size', 12)
+        //     .style('fill', '#ffffff')
+        // }
+        
   
-        gradientBar.append('text')
-          .attr('x', width - margin.right)
-          .attr('y', 20)
-          .attr("text-anchor", "middle")
-          .text('주의')
-          .style('font-size', 12)
-          .style('fill', '#ffffff')
+        // gradientBar.append('text')
+        //   .attr('x', margin.left)
+        //   .attr('y', 20)
+        //   .attr("text-anchor", "middle")
+        //   .text('보통')
+        //   .style('font-size', 12)
+        //   .style('fill', '#ffffff')
+  
+        // gradientBar.append('text')
+        //   .attr('x', width - margin.right)
+        //   .attr('y', 20)
+        //   .attr("text-anchor", "middle")
+        //   .text('주의')
+        //   .style('font-size', 12)
+        //   .style('fill', '#ffffff')
         
         // side text area
         let text = '';

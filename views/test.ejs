@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="https://d3js.org/d3.v3.min.js"></script>
+</head>
+<body>
+  <h1>test</h1>
+  <div id="test" style="width: 968px; height: 937px;"></div>
+  <script>
+    Function.prototype.bind = Function.prototype.bind || function (thisp) {
+      var fn = this;
+      return function () {
+        return fn.apply(thisp, arguments);
+      };
+    }
+  </script>
+  <script>
+    var dataset = [9, 19, 29, 39, 29, 19, 9]; 
+    var svg = d3.select("#test").append('svg')
+      .attr('width', window.innerWidth)
+      .attr('height', window.innerHeight); 
+    for (var i=0; i < dataset.length; i++) { 
+      svg.append("rect") 
+        .attr("height", dataset[i]) 
+        .attr("width", 40) 
+        .attr("x", 50 * i); 
+    }
+  
+  </script>
+</body>
+</html>
