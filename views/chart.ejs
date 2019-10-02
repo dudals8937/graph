@@ -11,7 +11,19 @@
 
   <body>
     <h1>chart</h1>
-    <div id="chart"></div>
+    <div id="chart01"></div>
+    <div id="chart02"></div>
+    <div id="chart03"></div>
+    <div id="chart04"></div>
+    <div id="chart05"></div>
+    <div id="chart06"></div>
+    <div id="chart07"></div>
+    <div id="chart08"></div>
+    <div id="chart09"></div>
+    <div id="chart10"></div>
+    <div id="chart11"></div>
+    <div id="chart12"></div>
+    <div id="chart13"></div>
   </body>
 
   <script>
@@ -60,32 +72,52 @@
         tg: tg
       }
       console.log(data)
+      const koreanAvg = {
+        skinElasticity: 1,
+        pigmentation: 1,
+        skinAging: 0,
+        hairLoss: 3,
+        hair: 2,
+        vitaminc: 2,
+        caffeine: 1,
+        bmi: 24.90863,
+        tg: 1.568435,
+        ldl: 120.7607,
+        hdl: 48.92688,
+        bg: 4.543358,
+        dbp: 78.44469
+      }
       const myPoint = {
-        skinElasticity: 0.5,
-        pigmentation: 0.8,
-        skinAging: 0.2,
-        hairLoss: 0.78,
-        hair: 0.35,
-        vitaminc: 0.7,
-        caffeine: 0.1,
-        bmi: 0.47,
-        tg: 0.55, // 0.47
-        ldl: 0.75,
-        hdl: 0.33,
-        bg: 0.21,
-        dbp: 0.25
+        skinElasticity: 0,
+        pigmentation: 1,
+        skinAging: 2,
+        hairLoss: 3,
+        hair: 1,
+        vitaminc: 1,
+        caffeine: 1,
+        bmi: 24.7,
+        tg: 1.52, // 0.47
+        ldl: 128,
+        hdl: 48,
+        bg: 4.52,
+        dbp: 63
       }
       const decade = {
-        skinElasticity: 0,
-        pigmentation: 0,
-        caffeine: 0,
-        bmi: 0.27,
-        bg: 0.41,
-        dbp: 0.55,
+        skinElasticity: null,
+        pigmentation: null,
+        caffeine: null,
+        hairLoss: null,
+        vitaminc: null,
+        skinAging: null,
+        hair: null,
+        hairLoss: null,
+        bmi: 19,
+        bg: 4.6,
+        dbp: 82,
         sbp: 0,
-        hdl: 0.43,
-        ldl: 0.55,
-        tg: 0.58
+        hdl: 48,
+        ldl: 128,
+        tg: 1.62
       }
 
       const division = {
@@ -96,42 +128,57 @@
         hair: ['굵음','보통'],
         vitaminc: ['양호','주의'],
         caffeine: ['보통','좋음'],
-        bmi: ['관심','보통','주의'],
+        bmi: ['관심(저체질량)','보통','관심(고체질량)', '주의'],
         tg: ['좋음','보통','관심','주의'],
         ldl: ['좋음','보통','관심','주의'],
-        hdl: ['좋음','보통','관심','주의'],
+        hdl: ['주의', '관심', '보통', '좋음'],
         bg: ['양호','관심','주의'],
-        dbp: ['관심','보통','주의'],
+        dbp: ['관심(저혈압)','보통', '관심(고혈압)', '주의'],
       }
 
-      const divisionBar = {
-        skinElasticity: [2],
+      const barIndex = {
+        skinElasticity: [1],
         pigmentation: [0, 2],
-        skinAging: [],
-        hairLoss: [],
-        hair: [],
-        vitaminc: [],
-        caffeine: [3],
-        bmi: [],
-        tg: [],
-        ldl: [],
-        hdl: [],
-        bg: [],
-        dbp: [],
+        skinAging: [0],
+        hairLoss: [2],
+        hair: [1],
+        vitaminc: [1],
+        caffeine: [2],
+        bmi: [2, 7, 12],
+        tg: [0, 9, 13],
+        ldl: [3, 9, 12],
+        hdl: [3, 9, 11],
+        bg: [10, 13],
+        dbp: [3, 8, 11],
       }
-      drawBarChart(data.pigmentation, myPoint.pigmentation, decade.pigmentation, division.pigmentation, divisionBar.pigmentation)
-      
-      function drawBarChart(data, myPoint, decade, division, divisionBar) {
-        console.log(divisionBar)
-        console.log('데이터길이', data.length)
+
+      function drawChart() {
+        drawBarChart('#chart01', data.skinElasticity, koreanAvg.skinElasticity, myPoint.skinElasticity, decade.skinElasticity, division.skinElasticity, barIndex.skinElasticity)
+        drawBarChart('#chart02', data.pigmentation, koreanAvg.pigmentation, myPoint.pigmentation, decade.pigmentation, division.pigmentation, barIndex.pigmentation)
+        drawBarChart('#chart03', data.skinAging, koreanAvg.skinAging, myPoint.skinAging, decade.skinAging, division.skinAging, barIndex.skinAging)
+        drawBarChart('#chart04', data.hairLoss, koreanAvg.hairLoss, myPoint.hairLoss, decade.hairLoss, division.hairLoss, barIndex.hairLoss)
+        drawBarChart('#chart05', data.hair, koreanAvg.hair, myPoint.hair, decade.hair, division.hair, barIndex.hair)
+        drawBarChart('#chart06', data.vitaminc, koreanAvg.vitaminc, myPoint.vitaminc, decade.vitaminc, division.vitaminc, barIndex.vitaminc)
+        drawBarChart('#chart07', data.caffeine, koreanAvg.caffeine, myPoint.caffeine, decade.caffeine, division.caffeine, barIndex.caffeine)
+        drawBarChart('#chart08', data.bmi, koreanAvg.bmi, myPoint.bmi, decade.bmi, division.bmi, barIndex.bmi)
+        drawBarChart('#chart09', data.tg, koreanAvg.tg, myPoint.tg, decade.tg, division.tg, barIndex.tg)
+        drawBarChart('#chart10', data.ldl, koreanAvg.ldl, myPoint.ldl, decade.ldl, division.ldl, barIndex.ldl)
+        drawBarChart('#chart11', data.hdl, koreanAvg.hdl, myPoint.hdl, decade.hdl, division.hdl, barIndex.hdl)
+        drawBarChart('#chart12', data.bg, koreanAvg.bg, myPoint.bg, decade.bg, division.bg, barIndex.bg)
+        drawBarChart('#chart13', data.dbp, koreanAvg.dbp, myPoint.dbp, decade.dbp, division.dbp, barIndex.dbp)
+      }
+      drawChart()
+      function drawBarChart(obj, data, korAvg, myPoint, decade, division, barIndex) {
+        
         // define margin
         const margin = {top: 50, right: 50, bottom: 50, left:50};
         const GradientBarHeight = 30;
         // using value for linear-gradient color in rect
-        const colorRange = ['#6D8B6D', '#90B9AD', '#F3DF89', '#EB9263', '#E46460'];
+        // const colorRange = ['#6D8B6D', '#90B9AD', '#F3DF89', '#EB9263', '#E46460'];
+        const colorRange = ['#9ac676', '#bec74a', '#ffbf00', '#ea5a26', '#db2b41'];
         const color = d3.scaleLinear().range(colorRange).domain([1, 2, 3, 4, 5]);
         // draw svg
-        const svg = d3.select('#chart').append('svg')
+        const svg = d3.select(obj).append('svg')
           .attr('width', 654)
           .attr('height', 300)
           .attr('transform', `translate(${margin.left}, 0)`)
@@ -163,16 +210,167 @@
         linearGradient.append("stop")
           .attr("offset", "100%")
           .attr("stop-color", color(5));
+
+        // barIndex.length === 1
+        const length1_1 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length1-1");
+
+        length1_1.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(1));
+  
+        length1_1.append("stop")
+          .attr("offset", "80%")
+          .attr("stop-color", color(2));
+
+        length1_1.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(3));
+
+        const length1_2 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length1-2");
+
+        length1_2.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(3));
+  
+        length1_2.append("stop")
+          .attr("offset", "20%")
+          .attr("stop-color", color(3));
+
+        length1_2.append("stop")
+          .attr("offset", "70%")
+          .attr("stop-color", color(4));
+
+        length1_2.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(5));
+
+        // barIndex.length === 2
+        const length2_1 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length2-1");
+
+        length2_1.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(1));
+  
+        length2_1.append("stop")
+          .attr("offset", "80%")
+          .attr("stop-color", color(2));
+
+        length2_1.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(3));
+
+        const length2_2 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length2-2");
+
+        length2_2.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(3));
+  
+        length2_2.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", color(3));
+
+        length2_2.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(3));
+
+        const length2_3 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length2-3");
+
+        length2_3.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(3));
+  
+        length2_3.append("stop")
+          .attr("offset", "50%")
+          .attr("stop-color", color(4));
+
+        length2_3.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(5));
+
+        // barIndex.length === 3
+
+        const length3_1 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length3-1");
+
+        length3_1.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(1));
+  
+        length3_1.append("stop")
+          .attr("offset", "70%")
+          .attr("stop-color", color(2));
+
+        length3_1.append("stop")
+          .attr("offset", "110%")
+          .attr("stop-color", color(2));
+
+        const length3_2 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length3-2");
+
+        length3_2.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(2));
+  
+        length3_2.append("stop")
+          .attr("offset", "92%")
+          .attr("stop-color", color(3));
+
+        length3_2.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(3));
+
+        const length3_3 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length3-3");
+
+        length3_3.append("stop")
+          .attr("offset", "80%")
+          .attr("stop-color", color(3));
+  
+        // linearGradient3.append("stop")
+        //   .attr("offset", "90%")
+        //   .attr("stop-color", color(4));
+
+        length3_3.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(3));
+
+        const length3_4 = chart.append('defs')
+          .append("linearGradient")
+          .attr("id", "length3-4");
+
+        length3_4.append("stop")
+          .attr("offset", "0%")
+          .attr("stop-color", color(3));
+
+        length3_4.append("stop")
+          .attr("offset", "30%")
+          .attr("stop-color", color(4));
+
+        length3_4.append("stop")
+          .attr("offset", "100%")
+          .attr("stop-color", color(5));
         // setting layout
         const width = parseInt(svg.style('width'), 10) -150
-        console.log(width)
         const height = parseInt(svg.style("height"), 10);
         // define scale
         const xScale = d3.scaleBand()
           .domain(data.map((d, i) => i))
           .range([0, width])
         const yScale = d3.scaleLinear()
-          .domain([0, (d3.max(data, (d) => Math.floor(Number(d.population.split('%')[0])))) + 5])
+          .domain([0, (d3.max(data, (d) => Math.floor(d.population))) + 5])
           .range([height - GradientBarHeight, 70])
                     
         // Axis Y
@@ -181,11 +379,20 @@
           .attr('transform', 'translate(30, 0)')
   
         yAxis.append('g')
-          .call(d3.axisLeft(yScale).ticks(4))
+          .call(d3.axisLeft(yScale).ticks(4).tickSize(0))
+
+        d3.select('.domain')
+          .attr("stroke-opacity", 0.4)
+
+        d3.selectAll('.tick line')
+          .style('display', 'none')
+
+        d3.selectAll('.tick text')
+          .attr('x', '-7')
 
         const yAxisName = chart.append('g')
           .attr('class', 'population')
-          .attr('transform', 'translate(30, 0)')
+          .attr('transform', 'translate(30, 20)')
 
         yAxisName.append('text')
           .attr('x', 0)
@@ -200,10 +407,10 @@
         barChart.selectAll('rect').data(data).enter()
           .append('rect')
             .attr("width", xScale.bandwidth())
-            .attr("height", (d, i) => { return height - yScale(Number(d.population.split('%')[0])) - GradientBarHeight})
+            .attr("height", (d, i) => { return height - yScale(d.population) - GradientBarHeight})
             .attr('x', (d, i) => i * xScale.bandwidth())
-            .attr("y", (d, i) => yScale(Number(d.population.split('%')[0])))
-            .attr("fill", "#bebebe")
+            .attr("y", (d, i) => yScale(d.population))
+            .attr("fill", "#E7E6E6")
             .style("text-anchor", "middle")
   
         // Duplicate value
@@ -214,7 +421,7 @@
         let duplicate = [];
         let duplicate2 = [];
         data.forEach(d => {
-          if(d.average !== 0 && d.average >= d.begin && d.average <= d.end) {
+          if(korAvg >= d.begin && korAvg <= d.end) {
             duplicate = d;
             if(myPoint >= duplicate.begin && myPoint <= duplicate.end) {
               duplicate.myPoint = myPoint
@@ -224,7 +431,7 @@
             }
           }
         });
-        // console.log(duplicate)
+        console.log('dupli1', duplicate)
 
         data.forEach(d => {
           if(myPoint >= d.begin && myPoint <= d.end) {
@@ -234,7 +441,7 @@
             }
           }
         })
-        // console.log(duplicate2)
+        console.log('dupli2', duplicate2)
         // data.forEach(d => {
         //   // if((d.average !== 0 && d.average >= d.begin && d.average <=d.end)) {
         //   if((myPoint >= d.begin && myPoint <=d.end) || ( d.average !== 0 && d.average >= d.begin && d.average <=d.end) || (decade >= d.begin && decade <=d.end)) {
@@ -246,20 +453,20 @@
         // Marker
         // decade
         const markerAfter10Year = chart.append('g')
-			    .attr('class', 'marker')
+			    .attr('class', 'markerAfter10Year')
 			    .attr('transform', 'translate(30, 0)');
         // My point Marker
         // z-index 때문에 my-marker를 먼저 그리고 그 다음에 한국인 평균 marker 그리도록. 따라서 10년후가 제일 먼저 그려져야함
         const markerMypoint = chart.append('g')
-          .attr('class', 'marker')
+          .attr('class', 'markerMypoint')
           .attr('transform', 'translate(30, 0)');
         // Korean average Marker
         const markerAvg = chart.append('g')
-          .attr('class', 'marker')
+          .attr('class', 'markerAvg')
           .attr('transform', 'translate(30, 0)');
-        const locateAvg = barChart.selectAll('rect').filter(d => {return d.average !== 0 && d.average >= d.begin && d.average <=d.end})
+        const locateAvg = barChart.selectAll('rect').filter(d => {return korAvg >= d.begin && korAvg <=d.end})
           .attr('class', 'average');
-        const r = 15; // marker 반지름
+        const r = 16; // marker 반지름
         const avgX = Number(locateAvg.attr('x')) + Number(locateAvg.attr('width')) / 2;
         const avgY = Number(locateAvg.attr('y'));
         // const avgX = locateAvg._groups[0][0].x.baseVal.value + (locateAvg._groups[0][0].width.baseVal.value / 2)
@@ -338,168 +545,300 @@
           .style('font-size', 9)
           .style('font-weight', 'bold')
           .text('평균');
-          
+        
         // 내 점수 marker에 id 값과 색상 부여
-        barChart.selectAll('rect').filter(d => {return myPoint >= d.begin && myPoint <=d.end})
-          .attr('id', 'my-point')
-          .attr('fill', '#E16487');
-        const point = d3.select('#my-point')
-        const myX = Number(point.attr('x')) + Number(point.attr('width')) / 2
-        const myY = Number(point.attr('y'))
-        // const myX = point._groups[0][0].x.baseVal.value + (point._groups[0][0].width.baseVal.value / 2)
-        // const myY = point._groups[0][0].y.baseVal.value
+        // 뷰티는 내점수가 인자값, 헬스는 실제값이므로 rect를 선택하는 분기가 달라야 함
+
+        // let point, myX, myY
+        // if(decade === null) {
+        //   barChart.selectAll('rect').filter(function (d, i) {
+        //     return myPoint + 3 === i
+        //   })
+        //   .attr('id', 'my-point')
+        //   .attr('fill', '#F2708B');
+
+        //   point = d3.select('#my-point')
+        //   myX = Number(point.attr('x')) + Number(point.attr('width')) / 2
+        //   myY = Number(point.attr('y'))
+        // } else {
+        //   barChart.selectAll('rect').filter(function (d) {return myPoint >= d.begin && myPoint <=d.end})
+        //   .attr('id', 'my-point')
+        //   .attr('fill', '#F2708B');
+
+        //   point = d3.select('#my-point')
+        //   myX = Number(point.attr('x')) + Number(point.attr('width')) / 2
+        //   myY = Number(point.attr('y'))
+        // }
+        // barChart.selectAll('rect').filter(function (d, i) {
+        //   return myPoint + 3 === i
+        // })
+        // barChart.selectAll('rect').filter(function (d) {return myPoint >= d.begin && myPoint <=d.end})
+
+        console.log('내점수', myPoint)
+        if (decade === null) {
+          const point = barChart.selectAll('rect').filter(function (d, i) {
+            return myPoint + 3 === i
+          })
+            .attr('class', 'my-point')
+            .attr('fill', '#F2708B');
+          const myX = Number(point.attr('x')) + Number(point.attr('width')) / 2
+          const myY = Number(point.attr('y'))
+          // const myX = point._groups[0][0].x.baseVal.value + (point._groups[0][0].width.baseVal.value / 2)
+          // const myY = point._groups[0][0].y.baseVal.value
+            
+          // draw my point marker
+          markerMypoint.append('line')
+            .attr('x1', myX)
+            .attr('x2', myX)
+            .attr('y1', () => {
+              if(duplicate2.decade && duplicate2.average === 0) {
+                return myY - 15
+              } else if (duplicate2.decade && duplicate2.average > 0) {
+                return myY - defaultY
+              } else {
+                return myY - defaultY
+              }
+            })
+            .attr('y2', myY)
+            .attr('stroke', '#F2708B')
+          markerMypoint.append('circle')
+            .attr('cx', myX)
+            .attr('cy', () => {
+              if(duplicate2.decade && duplicate2.average === 0) {
+                return myY - 25
+              } else if (duplicate2.decade && duplicate2.average > 0) {
+                return myY - defaultY
+              } else {
+                return myY - defaultY
+              }
+            })
+            .attr('r', r)
+            .attr('fill', '#F2708B')
+          // text in circle
+          markerMypoint.append('text')
+            .attr('x', myX)
+            .attr('y', () => {
+              if(duplicate2.decade && duplicate2.average === 0) {
+                return myY - defaultY + 38
+              } else if (duplicate2.decade && duplicate2.average > 0) {
+                return myY - defaultY + 3
+              } else {
+                return myY - defaultY + 3
+              }
+            })
+            .attr('fill', '#ffffff')
+            .attr("text-anchor", "middle")
+            .style('font-size', 9)
+            .style('font-weight', 'bold')
+            .text('내점수')
+        } else {
+          const point = barChart.selectAll('rect')
           
-        // draw my point marker
-        markerMypoint.append('line')
-          .attr('x1', myX)
-          .attr('x2', myX)
-          .attr('y1', () => {
-            if(duplicate2.decade && duplicate2.average === 0) {
-              return myY - 15
-            } else if (duplicate2.decade && duplicate2.average > 0) {
-              return myY - defaultY
-            } else {
-              return myY - defaultY
-            }
-          })
-          .attr('y2', myY)
-          .attr('stroke', '#E16487')
-        markerMypoint.append('circle')
-          .attr('cx', myX)
-          .attr('cy', () => {
-            if(duplicate2.decade && duplicate2.average === 0) {
-              return myY - 25
-            } else if (duplicate2.decade && duplicate2.average > 0) {
-              return myY - defaultY
-            } else {
-              return myY - defaultY
-            }
-          })
-          .attr('r', r)
-          .attr('fill', '#E16487')
-        // text in circle
-        markerMypoint.append('text')
-          .attr('x', myX)
-          .attr('y', () => {
-            if(duplicate2.decade && duplicate2.average === 0) {
-              return myY - defaultY + 38
-            } else if (duplicate2.decade && duplicate2.average > 0) {
-              return myY - defaultY + 3
-            } else {
-              return myY - defaultY + 3
-            }
-          })
-          .attr('fill', '#ffffff')
-          .attr("text-anchor", "middle")
-          .style('font-size', 9)
-          .style('font-weight', 'bold')
-          .text('내점수')
+          if( data[0].begin > myPoint ) {
+            point.filter(function (d, i, array) {
+              return i == 3 
+            })
+            .attr('class', 'my-point')
+            .attr('fill', '#F2708B');
+          }
 
-        const after10year = barChart.selectAll('rect').filter(d => {return decade >= d.begin && decade <=d.end})
-          .attr('class', 'after10year')
-
-        const decadeX = Number(after10year.attr('x')) + Number(after10year.attr('width')) / 2
-        const decadeY = Number(after10year.attr('y'))
-
-        markerAfter10Year.append('line')
-          .attr('x1', decadeX)
-          .attr('x2', decadeX)
-          .attr('y1', () => {
-            if(duplicate.myPoint && duplicate.decade) {
-              return decadeY - 98
-            } else if (!duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY
-            } else if (duplicate.myPoint && !duplicate.decade) {
-              return decadeY - defaultY
-            } else {
-              return decadeY - defaultY
-            }
+          point.filter(function (d, i, array) {
+            return myPoint >= d.begin && myPoint <=d.end
           })
-          .attr('y2', decadeY)
-          .attr('stroke', '#28a8a8')
+            .attr('class', 'my-point')
+            .attr('fill', '#F2708B');
+          const myX = Number(point.attr('x')) + Number(point.attr('width')) / 2
+          const myY = Number(point.attr('y'))
+          // const myX = point._groups[0][0].x.baseVal.value + (point._groups[0][0].width.baseVal.value / 2)
+          // const myY = point._groups[0][0].y.baseVal.value
+            
+          // draw my point marker
+          markerMypoint.append('line')
+            .attr('x1', myX)
+            .attr('x2', myX)
+            .attr('y1', () => {
+              if(duplicate2.decade && duplicate2.average === 0) {
+                return myY - 15
+              } else if (duplicate2.decade && duplicate2.average > 0) {
+                return myY - defaultY
+              } else {
+                return myY - defaultY
+              }
+            })
+            .attr('y2', myY)
+            .attr('stroke', '#F2708B')
+          markerMypoint.append('circle')
+            .attr('cx', myX)
+            .attr('cy', () => {
+              if(duplicate2.decade && duplicate2.average === 0) {
+                return myY - 25
+              } else if (duplicate2.decade && duplicate2.average > 0) {
+                return myY - defaultY
+              } else {
+                return myY - defaultY
+              }
+            })
+            .attr('r', r)
+            .attr('fill', '#F2708B')
+          // text in circle
+          markerMypoint.append('text')
+            .attr('x', myX)
+            .attr('y', () => {
+              if(duplicate2.decade && duplicate2.average === 0) {
+                return myY - defaultY + 38
+              } else if (duplicate2.decade && duplicate2.average > 0) {
+                return myY - defaultY + 3
+              } else {
+                return myY - defaultY + 3
+              }
+            })
+            .attr('fill', '#ffffff')
+            .attr("text-anchor", "middle")
+            .style('font-size', 9)
+            .style('font-weight', 'bold')
+            .text('내점수')
+        }
 
-          markerAfter10Year.append('circle')
-          .attr('cx', decadeX)
-          .attr('cy', () => {
-            if(duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY - 40
-            } else if (!duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY
-            } else if (duplicate.myPoint && !duplicate.decade) {
-              return decadeY - defaultY
-            } else {
-              return decadeY - defaultY
-            }
-          })
-          .attr('r', r)
-          .attr('fill', '#28a8a8')
+        if(decade !== null) {
 
-        markerMypoint.append('text')
-          .attr('x', decadeX)
-          .attr('y', () => {
-            if(duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY - 40
-            } else if (!duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY
-            } else if (duplicate.myPoint && !duplicate.decade) {
-              return decadeY - defaultY
-            } else {
-              return decadeY - defaultY
+          const after10year = barChart.selectAll('rect').filter((d, i) => {
+            if(d.begin > decade) {
+              return d[0]
             }
+            return decade >= d.begin && decade <=d.end
           })
-          .attr('fill', '#ffffff')
-          .attr("text-anchor", "middle")
-          .style('font-size', 9)
-          .style('font-weight', 'bold')
-          .text('10년후')
+            .attr('class', 'after10year')
 
-        markerMypoint.append('text')
-          .attr('x', decadeX)
-          .attr('y', () => {
-            if(duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY - 30
-            } else if (!duplicate.myPoint && duplicate.decade) {
-              return decadeY - defaultY + 10
-            } else if (duplicate.myPoint && !duplicate.decade) {
-              return decadeY - defaultY + 10
-            } else {
-              return decadeY - defaultY + 10
-            }
-          })
-          .attr('fill', '#ffffff')
-          .attr("text-anchor", "middle")
-          .style('font-size', 9)
-          .style('font-weight', 'bold')
-          .text('예측')
+          const decadeX = Number(after10year.attr('x')) + Number(after10year.attr('width')) / 2
+          const decadeY = Number(after10year.attr('y'))
+
+          markerAfter10Year.append('line')
+            .attr('x1', decadeX)
+            .attr('x2', decadeX)
+            .attr('y1', () => {
+              if(duplicate.myPoint && duplicate.decade) {
+                return decadeY - 98
+              } else if (!duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY
+              } else if (duplicate.myPoint && !duplicate.decade) {
+                return decadeY - defaultY
+              } else if (duplicate2.decade) {
+                return decadeY - 40
+              } else {
+                return decadeY - defaultY
+              }
+            })
+            .attr('y2', decadeY)
+            .attr('stroke', '#28a8a8')
+
+            markerAfter10Year.append('circle')
+            .attr('cx', decadeX)
+            .attr('cy', () => {
+              if(duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY - 40
+              } else if (!duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY
+              } else if (duplicate.myPoint && !duplicate.decade) {
+                return decadeY - defaultY
+              } else if (duplicate2.decade) {
+                return decadeY - 25
+              } else {
+                return decadeY - defaultY
+              }
+            })
+            .attr('r', r)
+            .attr('fill', '#28a8a8')
+
+          markerAfter10Year.append('text')
+            .attr('x', decadeX)
+            .attr('y', () => {
+              if(duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY - 40
+              } else if (!duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY
+              } else if (duplicate.myPoint && !duplicate.decade) {
+                return decadeY - defaultY
+              } else if (duplicate2.decade) {
+                return decadeY - 25
+              } else {
+                return decadeY - defaultY
+              }
+            })
+            .attr('fill', '#ffffff')
+            .attr("text-anchor", "middle")
+            .style('font-size', 9)
+            .style('font-weight', 'bold')
+            .text('10년후')
+
+          markerAfter10Year.append('text')
+            .attr('x', decadeX)
+            .attr('y', () => {
+              if(duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY - 30
+              } else if (!duplicate.myPoint && duplicate.decade) {
+                return decadeY - defaultY + 10
+              } else if (duplicate.myPoint && !duplicate.decade) {
+                return decadeY - defaultY + 10
+              } else if (duplicate2.decade) {
+                return decadeY - 15
+              } else {
+                return decadeY - defaultY + 10
+              }
+            })
+            .attr('fill', '#ffffff')
+            .attr("text-anchor", "middle")
+            .style('font-size', 9)
+            .style('font-weight', 'bold')
+            .text('예측')
+        }
         // draw gradient bar
         var gradientBar = chart.append("g")
           .attr('class', 'bottom-bar')
           .attr("transform", `translate(30, ${height - GradientBarHeight + 1})`)
         
-        console.log('divisionBar', divisionBar[0] + 1)
-        console.log('length', divisionBar.length)  
+        // console.log('barIndex', barIndex[0] + 1)
+        // console.log('length', barIndex.length)
 
-        if(divisionBar.length === 1) {
-          var divisionX = d3.selectAll('.x-axis > *').filter(":nth-child(" + (divisionBar[0] + 1) + ")").attr('x')
-          console.log('ddddddddddd', divisionX)
+        var defaultWidth = d3.select(obj +' > svg > g > .x-axis > rect').attr('width')
+        console.log('defaultWidth', defaultWidth)
+        // DB에서 받아오는 구분 값에 따라 width를 계산해 주기위한 함수
+        // num 에는 [] 배열값
+        // width 에는 각 막대그래프 하나의 넓이가 들어간다.
+        function calcWidth(num, width) {
+          return (num + 1) * width
+        }
+
+        var firstDivideWidth = calcWidth(barIndex[0] + 3, defaultWidth);
+        var secondDivideWidth = calcWidth(barIndex[1] + 3, defaultWidth);
+        var thirdDivideWidth = calcWidth(barIndex[2] + 3, defaultWidth);
+        var editWidth = 2;
+
+        console.log('firstDivideWidth', firstDivideWidth)
+        console.log('secondDivideWidth', secondDivideWidth)
+        console.log('thirdDivideWidth', thirdDivideWidth)
+
+        if(barIndex.length === 1) {
+          
           var rect1 = gradientBar.append('rect')
-            .attr("tl", 15)
-            .attr("bl", 15)
+            // .attr("rx", 15)
             .attr('height', 30)
-            .attr('width', divisionX)
-            .style('fill', '#6D8B6D')
+            .attr('width', firstDivideWidth)
+            .attr("fill", "url(#length1-1)")
+            // .style('fill', '#6D8B6D')
 
           var rect2 = gradientBar.append('rect')
-            .attr('x', divisionX)
+            // .attr("rx", 15)
+            .attr('x', firstDivideWidth)
             .attr('height', 30)
-            .attr('width', width - divisionX)
-            .attr('fill', '#E46460')
+            .attr('width', width - firstDivideWidth)
+            .attr("fill", "url(#length1-2)")
+            // .attr('fill', '#E46460')
 
           var gradientText1 = gradientBar.append('text')
           var gradientText2 = gradientBar.append('text')
 
           gradientText1
-            .attr('x', divisionX / 2)
+            .attr('x', firstDivideWidth / 2)
             .attr('y', 20)
             .attr("text-anchor", "middle")
             .text(division[0])
@@ -507,7 +846,7 @@
             .style('fill', '#ffffff')
   
           gradientText2
-            .attr('x', (rect1.attr('width') * 2 + (width - divisionX) ) / 2)
+            .attr('x', (rect1.attr('width') * 2 + (width - firstDivideWidth) ) / 2)
             .attr('y', 20)
             .attr("text-anchor", "middle")
             .text(division[1])
@@ -515,37 +854,33 @@
             .style('fill', '#ffffff')
         }
 
-        if(divisionBar.length === 2) {
-
-          var good = d3.selectAll('.x-axis > *').filter(":nth-child(" + (divisionBar[0] + 1) + ")").attr('width')
-          console.log('good', good)
-          var typical = d3.selectAll('.x-axis > *').filter(":nth-child(" + (divisionBar[1] + 1) + ")").attr('width') * (divisionBar[1] + 1)
-          console.log('typical', typical)
+        if(barIndex.length === 2) {
 
           var rect1 = gradientBar.append('rect')
-            .attr("tl", 15)
-            .attr("bl", 15)
+            // .attr("rx", 15)
+            .attr("r", 15)
             .attr('height', 30)
-            .attr('width', good)
-            .style('fill', '#6D8B6D')
+            .attr('width', firstDivideWidth)
+            .attr("fill", "url(#length2-1)")
 
           var rect2 = gradientBar.append('rect')
-            .attr('x', good)
+            .attr('x', firstDivideWidth - editWidth)
             .attr('height', 30)
-            .attr('width', typical - good)
-            .attr('fill', '#F3DF89')
+            .attr('width', secondDivideWidth - firstDivideWidth + editWidth)
+            .attr("fill", "url(#length2-2)")
 
           var rect3 = gradientBar.append('rect')
-            .attr('x', typical)
+            .attr('x', secondDivideWidth - editWidth)
             .attr('height', 30)
-            .attr('width', width)
-            .style('fill', '#E46460')
+            .attr('width', width - secondDivideWidth + editWidth)
+            .attr("fill", "url(#length2-3)")
 
           var gradientText1 = gradientBar.append('text')
           var gradientText2 = gradientBar.append('text')
+          var gradientText3 = gradientBar.append('text')
 
           gradientText1
-            .attr('x', good / 2)
+            .attr('x', firstDivideWidth / 2)
             .attr('y', 20)
             .attr("text-anchor", "middle")
             .text(division[0])
@@ -553,10 +888,81 @@
             .style('fill', '#ffffff')
   
           gradientText2
-            .attr('x', (rect1.attr('width') * 2 + (typical - good) ) / 2)
+            .attr('x', (rect1.attr('width') * 2 + (secondDivideWidth - firstDivideWidth) ) / 2)
             .attr('y', 20)
             .attr("text-anchor", "middle")
             .text(division[1])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+
+          gradientText3
+            .attr('x', (secondDivideWidth * 2 + (width - secondDivideWidth) ) / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[2])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+        }
+        if(barIndex.length === 3) {
+
+          var rect1 = gradientBar.append('rect')
+            // .attr("rx", 15)
+            .attr('height', 30)
+            .attr('width', firstDivideWidth)
+            .attr("fill", "url(#length3-1)")
+
+          var rect2 = gradientBar.append('rect')
+            .attr('x', firstDivideWidth - editWidth)
+            .attr('height', 30)
+            .attr('width', secondDivideWidth - firstDivideWidth + editWidth)
+            .attr("fill", "url(#length3-2)")
+
+          var rect3 = gradientBar.append('rect')
+            .attr('x', secondDivideWidth - editWidth)
+            .attr('height', 30)
+            .attr('width', thirdDivideWidth - secondDivideWidth + editWidth)
+            .attr("fill", "url(#length3-3)")
+
+          var rect4 = gradientBar.append('rect')
+            .attr('x', thirdDivideWidth - editWidth)
+            .attr('height', 30)
+            .attr('width', width - thirdDivideWidth + editWidth)
+            .attr("fill", "url(#length3-4)")
+
+          var gradientText1 = gradientBar.append('text')
+          var gradientText2 = gradientBar.append('text')
+          var gradientText3 = gradientBar.append('text')
+          var gradientText4 = gradientBar.append('text')
+
+          gradientText1
+            .attr('x', firstDivideWidth / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[0])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+
+          gradientText2
+            .attr('x', (rect1.attr('width') * 2 + (secondDivideWidth - firstDivideWidth) ) / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[1])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+
+          gradientText3
+            .attr('x', (secondDivideWidth * 2 + (thirdDivideWidth - secondDivideWidth) ) / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[2])
+            .style('font-size', 12)
+            .style('fill', '#ffffff')
+
+          gradientText4
+            .attr('x', (thirdDivideWidth * 2 + (width - thirdDivideWidth) ) / 2)
+            .attr('y', 20)
+            .attr("text-anchor", "middle")
+            .text(division[3])
             .style('font-size', 12)
             .style('fill', '#ffffff')
         }
@@ -662,41 +1068,20 @@
         //   .style('fill', '#ffffff')
         
         // side text area
-        let text = '';
-        switch (data[0].begin) {
-          case "-0.025":
-            text = '혈당';
-            break;
-          case "-0.011":
-            text = '체질량지수';
-            break;
-          case "-0.01703704":
-            text = '혈압';
-            break;
-          case "-0.015":
-            text = 'HDL콜레스테롤';
-            break;
-          case "-0.020909091":
-            text = 'LDL콜레스테롤';
-            break;
-          case "-0.01751852":
-            text = `중성지방`;
-            break;
-        }
         const downTextArea = chart.append('g')
           .attr('class', 'text-area')
-          .attr('transform', `translate(-10, ${height - 22})`)
+          .attr('transform', `translate(-15, ${height - 22})`)
           .attr("text-anchor", "middle")
-        downTextArea.append('text').text(text)
+        downTextArea.append('text').text('항목')
           .attr('font-size', 10)
         downTextArea.append('text').text('낮아짐')
           .attr('transform', `translate(0, 20)`)
 
         const upTextArea = chart.append('g')
           .attr('class', 'text-area')
-          .attr('transform', `translate(${width + 60}, ${height - 22})`)
+          .attr('transform', `translate(${width + 70}, ${height - 22})`)
           .attr("text-anchor", "middle")
-        upTextArea.append('text').text(text)
+        upTextArea.append('text').text('항목')
           .attr('font-size', 10)
         upTextArea.append('text').text('높아짐')
           .attr('transform', `translate(0, 20)`)

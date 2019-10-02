@@ -7,7 +7,7 @@ module.exports = function(app){
     let bgDistCount = 0;
     const bgDist = [];
 
-    lineReader.eachLine('./public/data/health/tg.txt', (line, last) => {
+    lineReader.eachLine('./public/data/health/bmi.txt', (line, last) => {
       bgDist[bgDistCount] = filterItems(line);
       bgDistCount++;
 
@@ -19,7 +19,7 @@ module.exports = function(app){
     })
 
     function makeFile(data) {
-      fs.writeFile('./public/data/health/tg.json', data, (err) => {
+      fs.writeFile('./public/data/health/bmi.json', data, (err) => {
         if(err) {
           return console.log(err)
         }
@@ -30,11 +30,10 @@ module.exports = function(app){
     function filterItems(line) {
       const arr = line.split('\t');
       const item = {};
-      if(arr.length === 4) {
+      if(arr.length === 3) {
         item.begin = arr[0],
         item.end = arr[1],
-        item.population = arr[2]
-        item.average = Number(arr[3])
+        item.population = Number(arr[2])
       }
       return item;
     }

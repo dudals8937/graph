@@ -1,4 +1,10 @@
-begin	end	population	average
-0.000 	0.332 	13.00%	
-0.333 	0.666 	49.00%	0.4995
-0.667 	1.000 	38.00%	
+begin	end	population
+null	null	null
+null	null	null
+null	null	null
+0 	0.99 	13.00
+1 	1.99 	49.00
+2 	2.99 	38.00
+null	null	null
+null	null	null
+null	null	null
